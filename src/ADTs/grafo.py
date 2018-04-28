@@ -24,6 +24,7 @@ class Grafo:
     def contains_vertice(self, vertice):
         return self.datos.__contains__(vertice)
     
+    # PRE CONDICION: peso es un numero o algo que se pueda comparar por > o <
     # Agrega o actualiza una arista entre unVertice y otroVertice con el peso indicado o peso 1 por default si no se indica.
     # En caso de no existir alguno de los vertices devuelve una Exception
     def add_or_update_arista(self, unVertice, otroVertice, peso=1):
@@ -61,12 +62,13 @@ class Grafo:
     def get_all_vertices(self):
         return self.datos.keys()
     
-    # Devuelve un set con los vertices adyacentes a unVertice parametro o None en caso de no existir unVertice en el grafo
+    # Devuelve un set con los vertices adyacentes a unVertice parametro o None en caso de no existir unVertice en el grafo.
     def get_all_vertices_adyacentes(self, unVertice):
         aristasUnVertice = self.datos.get(unVertice)
         if(aristasUnVertice == None):
             return None
         return aristasUnVertice.keys()
     
+    # Devuelve true o false segun si el grafo esta vacio o no.
     def is_empty(self):
         return self.datos == {}
