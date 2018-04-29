@@ -135,6 +135,68 @@ class GrafoTest(unittest.TestCase):
         g.add_or_update_arista(1, 2, 2)
         with self.assertRaises(Exception):
             g.get_dijkstra(1,5)
+            
+    def test_primm_3_nodos(self):
+        g = Grafo()
+        g.add_vertice(1)
+        g.add_vertice(2)
+        g.add_vertice(3)
+        g.add_or_update_arista(1, 2, 1)
+        g.add_or_update_arista(1, 3, 4)
+        g.add_or_update_arista(2, 3, 2)
+        self.assertEqual(g.get_primm(1).datos, {1:{2:1},2:{1:1,3:2},3:{2:2}}, "Fallo primm 3 nodos")
+    
+    def test_primm_6_nodos(self):
+        g = Grafo()
+        g.add_vertice(1)
+        g.add_vertice(2)
+        g.add_vertice(3)
+        g.add_vertice(4)
+        g.add_vertice(5)
+        g.add_vertice(6)
+        g.add_or_update_arista(1, 2, 8)
+        g.add_or_update_arista(1, 3, 7)
+        g.add_or_update_arista(2, 3, 6)
+        g.add_or_update_arista(2, 6, 1)
+        g.add_or_update_arista(3, 4, 9)
+        g.add_or_update_arista(3, 5, 3)
+        g.add_or_update_arista(3, 6, 4)
+        g.add_or_update_arista(4, 5, 2)
+        self.assertEqual(g.get_primm(1).datos, {1:{3:7},2:{6:1},3:{1:7,5:3,6:4},4:{5:2},5:{3:3,4:2},6:{2:1,3:4}}, "Fallo primm 6 nodos")
+        
+    def test_primm_nodo_aislado(self):
+        g = Grafo()
+        g.add_vertice(1)
+        g.add_vertice(2)
+        g.add_vertice(3)
+        g.add_vertice(4)
+        g.add_vertice(5)
+        g.add_or_update_arista(1, 2, 2)
+        g.add_or_update_arista(1, 4, 1)
+        g.add_or_update_arista(4, 3, 3)
+        g.add_or_update_arista(2, 3, 4)
+        self.assertEqual(g.get_primm(5), None, "Fallo primm nodo aislado")
+    
+    def test_primm_subgrafo_aislado(self):
+        g = Grafo()
+        g.add_vertice(1)
+        g.add_vertice(2)
+        g.add_vertice(3)
+        g.add_vertice(4)
+        g.add_vertice(5)
+        g.add_or_update_arista(1, 2, 2)
+        g.add_or_update_arista(1, 3, 1)
+        g.add_or_update_arista(4, 5, 3)
+        g.add_or_update_arista(2, 3, 4)
+        self.assertEqual(g.get_primm(5), None, "Fallo primm subgrafo aislado")
+        
+    def test_primm_nodo_inexistente(self):
+        g = Grafo()
+        g.add_vertice(1)
+        g.add_vertice(2)
+        g.add_or_update_arista(1, 2, 2)
+        with self.assertRaises(Exception):
+            g.get_primm(5)
         
 
         

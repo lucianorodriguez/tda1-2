@@ -80,6 +80,11 @@ class Grafo:
     def is_empty(self):
         return self.datos == {}
     
+    # Hace el algoritmo de dijkstra para encontrar el camino minimo entre verticeOrigen y verticeDestino
+    # Devuelve una Exception si alguno de los vertices no se encuentra en el grafo
+    # Devuelve None si no hay camino que una verticeOrigen y verticeDestino
+    # Devuelve el camino hasta el verticeDestino en forma de lista sin el verticeDestino al final y la distancia 
+    #     total del camino contando el verticeDestino.
     def get_dijkstra(self, verticeOrigen, verticeDestino):
         if(not self.contains_vertice(verticeOrigen) or not self.contains_vertice(verticeDestino)):
             raise Exception('Uno de los vertices no se encontro en el grafo')
@@ -98,6 +103,49 @@ class Grafo:
             return None
         return nodoActual.camino, nodoActual.distancia
     
+    def get_primm(self, verticeOrigen):
+        if(not self.contains_vertice(verticeOrigen)):
+            raise Exception('Uno de los vertices no se encontro en el grafo')
+        heap = Heap([])
+        conectados = {verticeOrigen : 1}
+        arbolTendidoMinimo = Grafo()
+        arbolTendidoMinimo.add_vertice(verticeOrigen)
+        verticeActual = verticeOrigen
+        while len(conectados) < len(self.datos):
+            for key,value in self.datos.get(verticeActual).items():
+                if not conectados.__contains__(key):
+                    heap.push(self.Arista(verticeActual,key,value))
+            if len(heap) == 0:
+                return None
+            arista = heap.pop()
+            while conectados.__contains__(arista.verticeDestino):
+                if len(heap) == 0:
+                    return None
+                arista = heap.pop()
+            verticeActual = arista.verticeDestino
+            conectados.__setitem__(verticeActual, 1)
+            arbolTendidoMinimo.add_vertice(arista.verticeDestino)
+            arbolTendidoMinimo.add_or_update_arista(arista.verticeOrigen, arista.verticeDestino, arista.peso)
+        return arbolTendidoMinimo
+    
+    class Arista:
+        def __init__(self, verticeOrigen, verticeDestino, peso):
+            self.verticeOrigen = verticeOrigen
+            self.verticeDestino = verticeDestino
+            self.peso = peso
+        
+        def __lt__(self, other):
+            return self.peso < other.peso
+        
+        def __le__(self, other):
+            return self.peso <= other.peso
+            
+        def __gt__(self, other):
+            return self.peso > other.peso
+            
+        def __ge__(self, other):
+            return self.peso >= other.peso
+        
     class NodoDijkstra:
         
         def __init__(self, vertice, distancia, camino):
@@ -110,9 +158,6 @@ class Grafo:
         
         def __le__(self, other):
             return self.distancia <= other.distancia
-            
-        def __ne__(self, other):
-            return self.distancia != other.distancia
             
         def __gt__(self, other):
             return self.distancia > other.distancia

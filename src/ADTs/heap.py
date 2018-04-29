@@ -49,9 +49,9 @@ class Heap:
         raiz = self.datos[0]
         self.datos[len(self.datos) - 1],self.datos[0] = self.datos[0],self.datos[len(self.datos) - 1]
         minimo = self.datos.pop()
-        if self.size() > 0:
+        if len(self) > 0:
             self.downheap(0)
         return minimo
     
-    def size(self):
+    def __len__(self):
         return len(self.datos)
