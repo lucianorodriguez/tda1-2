@@ -1,15 +1,21 @@
+from heap import Heap
+import sys
+
+
 class Grafo:
     
     # Inicializa un grafo vacio sin pesos por default.
-    def __init__(self, conPesos = False):
+    def __init__(self, conPesos=False):
         self.datos = {}
         self.conPesos = conPesos
+        self.cantidadVertices = 0
     
     # Agrega un vertice al grafo. Si el vertice ya existia deja todo igual
     # IMPORTANTE: Si el vertice es un objeto asegurarse que tenga implementado __hash__(self)
     def add_vertice(self, vertice):
         if(not self.contains_vertice(vertice)):
             self.datos.__setitem__(vertice, {})
+            self.cantidadVertices += 1
     
     # Elimina el vertice o deja todo igual en caso de no existir.
     # Devuelve todas las aristas adyacentes con sus pesos o None segun exista o no exista el vertice.
@@ -18,6 +24,7 @@ class Grafo:
             aristas = self.datos.pop(vertice)
             for key in aristas.keys():
                 self.datos.get(key).pop(vertice)
+            self.cantidadVertices -= 1
         return None
     
     # Devuelve true o false segun el vertice exista o no en el grafo.
@@ -72,3 +79,44 @@ class Grafo:
     # Devuelve true o false segun si el grafo esta vacio o no.
     def is_empty(self):
         return self.datos == {}
+    
+    def get_dijkstra(self, verticeOrigen, verticeDestino):
+        if(not self.contains_vertice(verticeOrigen) or not self.contains_vertice(verticeDestino)):
+            raise Exception('Uno de los vertices no se encontro en el grafo')
+        nodoActual = self.NodoDijkstra(verticeOrigen, 0, [])
+        visitados = {}
+        heap = Heap([])
+        heap.push(self.NodoDijkstra(verticeDestino, sys.maxsize, []))
+        while (verticeDestino != nodoActual.vertice):
+            if(not visitados.__contains__(nodoActual.vertice)):
+                visitados.__setitem__(nodoActual.vertice, 1)
+                for adyacente in self.get_all_vertices_adyacentes(nodoActual.vertice):
+                    if(not visitados.__contains__(adyacente)):
+                        heap.push(self.NodoDijkstra(adyacente, nodoActual.distancia + self.get_peso_arista(nodoActual.vertice, adyacente), nodoActual.camino + [nodoActual.vertice]))
+            nodoActual = heap.pop()
+        if(nodoActual.distancia == sys.maxsize):
+            return None
+        return nodoActual.camino, nodoActual.distancia
+    
+    class NodoDijkstra:
+        
+        def __init__(self, vertice, distancia, camino):
+            self.vertice = vertice
+            self.distancia = distancia
+            self.camino = camino
+        
+        def __lt__(self, other):
+            return self.distancia < other.distancia
+        
+        def __le__(self, other):
+            return self.distancia <= other.distancia
+            
+        def __ne__(self, other):
+            return self.distancia != other.distancia
+            
+        def __gt__(self, other):
+            return self.distancia > other.distancia
+            
+        def __ge__(self, other):
+            return self.distancia >= other.distancia
+        
