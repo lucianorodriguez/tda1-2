@@ -103,6 +103,10 @@ class Grafo:
             return None
         return nodoActual.camino, nodoActual.distancia
     
+    # Hace el algoritmo de primm para encontrar el arbol de tendido minimo desde verticeOrigen
+    # Devuelve una Exception si el verticeOrigen no se encuentra en el grafo
+    # Devuelve None si el grafo no es conexo
+    # Devuelve el arbol de tendido minimo en forma de grafo
     def get_primm(self, verticeOrigen):
         if(not self.contains_vertice(verticeOrigen)):
             raise Exception('Uno de los vertices no se encontro en el grafo')
